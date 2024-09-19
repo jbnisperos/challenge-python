@@ -12,11 +12,10 @@ class UploadResumePage:
     def upload_cv_file(self, file_path):
         # Upload the file to the CV input
         self.upload_cv.set_input_files(file_path)
-        
-        # Check if the upload is in progress
-         expect(self.uploading_in_progress).to_be_visible(timeout=20000) # Wait until it's visible
-        expect(self.uploading_in_progress).to_be_hidden(timeout=20000)  # 20 seconds timeout
 
-        
+        # Check if the upload is in progress
+        expect(self.uploading_in_progress).to_be_visible(timeout=20000)  # Make sure this line has correct indentation
+        expect(self.uploading_in_progress).to_be_hidden(timeout=20000)
+
         # Close the upload dialog
         self.dialog_box_close_button.click()
