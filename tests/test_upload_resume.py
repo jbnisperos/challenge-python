@@ -5,7 +5,10 @@ from pages.upload_resume_page import UploadResumePage
 from pages.delete_all_page import DeleteAllPage
 import sys
 import os
+
+# Add parent directory to Python path to ensure imports work correctly
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
 @pytest.fixture(scope="session")
@@ -52,6 +55,20 @@ def new_page(browser_context):
     # Create a new page using the session-scoped context
     page = browser_context.new_page()
     yield page
+    # This is where the teardown/afterEach behavior happens
+    login_page = LoginPage(page)
+    delete_all_page = DeleteAllPage(page)
+
+    login_page.go_to()
+    
+    # Handle dialogs before performing delete operations
+    page.on("dialog", lambda dialog: dialog.accept())
+
+    # Perform delete actions after the test is complete
+    delete_all_page.delete_edit_experience_and_skills()
+    delete_all_page.delete_edit_qualifications()
+    delete_all_page.delete_uploaded_cv()
+    
     page.close()
 
 @pytest.mark.usefixtures("new_page")
@@ -61,7 +78,7 @@ class TestUploadResume:
         login_page = LoginPage(new_page)
         upload_resume_page = UploadResumePage(new_page)
 
-        file_path = './fixtures/CV1.docx'
+        file_path = os.path.abspath('./fixtures/CV1.docx')  # Ensure absolute path
         login_page.go_to()
         upload_resume_page.upload_cv_file(file_path)
 
@@ -69,7 +86,7 @@ class TestUploadResume:
         login_page = LoginPage(new_page)
         upload_resume_page = UploadResumePage(new_page)
 
-        file_path = './fixtures/CV2.doc'
+        file_path = os.path.abspath('./fixtures/CV2.doc')  # Ensure absolute path
         login_page.go_to()
         upload_resume_page.upload_cv_file(file_path)
 
@@ -77,7 +94,7 @@ class TestUploadResume:
         login_page = LoginPage(new_page)
         upload_resume_page = UploadResumePage(new_page)
 
-        file_path = './fixtures/CV3.txt'
+        file_path = os.path.abspath('./fixtures/CV3.txt')  # Ensure absolute path
         login_page.go_to()
         upload_resume_page.upload_cv_file(file_path)
 
@@ -85,7 +102,7 @@ class TestUploadResume:
         login_page = LoginPage(new_page)
         upload_resume_page = UploadResumePage(new_page)
 
-        file_path = './fixtures/CV4.pdf'
+        file_path = os.path.abspath('./fixtures/CV4.pdf')  # Ensure absolute path
         login_page.go_to()
         upload_resume_page.upload_cv_file(file_path)
 
@@ -93,16 +110,6 @@ class TestUploadResume:
         login_page = LoginPage(new_page)
         upload_resume_page = UploadResumePage(new_page)
 
-        file_path = './fixtures/CV5.rtf'
+        file_path = os.path.abspath('./fixtures/CV5.rtf')  # Ensure absolute path
         login_page.go_to()
         upload_resume_page.upload_cv_file(file_path)
-
-    def teardown_method(self, new_page):
-        login_page = LoginPage(new_page)
-        delete_all_page = DeleteAllPage(new_page)
-
-        login_page.go_to()
-        new_page.on("dialog", lambda dialog: dialog.accept())
-        delete_all_page.delete_edit_experience_and_skills()
-        delete_all_page.delete_edit_qualifications()
-        delete_all_page.delete_uploaded_cv()

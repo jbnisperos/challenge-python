@@ -1,5 +1,3 @@
-# upload_resume_page.py
-
 from playwright.sync_api import expect
 
 class UploadResumePage:
@@ -16,8 +14,9 @@ class UploadResumePage:
         self.upload_cv.set_input_files(file_path)
         
         # Check if the upload is in progress
-        expect(self.uploading_in_progress).to_be_visible()
-        expect(self.uploading_in_progress).to_be_hidden()
+         expect(self.uploading_in_progress).to_be_visible(timeout=20000) # Wait until it's visible
+        expect(self.uploading_in_progress).to_be_hidden(timeout=20000)  # 20 seconds timeout
+
         
         # Close the upload dialog
         self.dialog_box_close_button.click()
