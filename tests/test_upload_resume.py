@@ -3,6 +3,10 @@ from playwright.sync_api import sync_playwright
 from pages.login_page import LoginPage
 from pages.upload_resume_page import UploadResumePage
 from pages.delete_all_page import DeleteAllPage
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 
 @pytest.fixture(scope="session")
 def browser_context(playwright):
